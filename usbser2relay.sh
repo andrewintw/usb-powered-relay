@@ -3,11 +3,11 @@
 # USB relay module: LCUS-1 (http://images.100y.com.tw/pdf_file/57-LCUS-1.pdf)
 #
 # Test Command:
-#     $ sudo /bin/sh -c "echo -n -e '\xA0\x01\x01\xA2' > /dev/ttyUSB1" # ON
-#     $ sudo /bin/sh -c "echo -n -e '\xA0\x01\x00\xA1' > /dev/ttyUSB1" # OFF
+#     $ sudo /bin/sh -c "echo -n -e '\xA0\x01\x01\xA2' > /dev/ttyUSB1" # COM-NO
+#     $ sudo /bin/sh -c "echo -n -e '\xA0\x01\x00\xA1' > /dev/ttyUSB1" # COM-NC
 
-HEX_CODE_ON='\xA0\x01\x01\xA2'
-HEX_CODE_OFF='\xA0\x01\x00\xA1'
+HEX_CODE_OFF='\xA0\x01\x01\xA2'
+HEX_CODE_ON='\xA0\x01\x00\xA1'
 ROOT_UID=0
 
 serdev="$1"
@@ -18,8 +18,8 @@ usage() {
 	cat <<EOF
 
 Usage: $0 <path_to_tty_device> <0|1>
-       0: Turn the Relay ON
-       1: Turn the Relay OF
+       0: Turn the Relay OFF
+       1: Turn the Relay ON
 
 EX: $0 /dev/ttyUSB1 0
 
@@ -27,13 +27,13 @@ EOF
 }
 
 do_init() {
-	if [ "$UID" -ne "$ROOT_UID" ] ;then
-		echo "Warning: you should run the script with root permission!"
-		#exit 1
-	fi
-
 	if [ "$argv" != "2" ] || [ "$op" = "" ]; then
 		usage
+		exit 1
+	fi
+
+	if [ "$UID" -ne "$ROOT_UID" ] ;then
+		echo "Warning: you should run the script with root permission!"
 		exit 1
 	fi
 
@@ -51,9 +51,9 @@ EOF
 hex2ser() {
 	local action="$1"
 	if [ "$action" = "ON" ]; then
-		sudo /bin/sh -c "echo -n -e '$HEX_CODE_ON' > /dev/ttyUSB1"
+		/bin/sh -c "echo -n -e '$HEX_CODE_ON' > $serdev"
 	else
-		sudo /bin/sh -c "echo -n -e '$HEX_CODE_OFF' > /dev/ttyUSB1"
+		/bin/sh -c "echo -n -e '$HEX_CODE_OFF' > $serdev"
 	fi
 }
 
