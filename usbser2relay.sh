@@ -1,5 +1,7 @@
 #! /bin/sh
-
+# Author: <https://github.com/andrewintw>
+# Copyright (C) 2023 <https://github.com/andrewintw>
+#
 # USB relay module: LCUS-1 (http://images.100y.com.tw/pdf_file/57-LCUS-1.pdf)
 #
 # Test Command:
